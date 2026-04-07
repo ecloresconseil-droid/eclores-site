@@ -1129,26 +1129,12 @@
       document.getElementById("nl-email").value = "";
     }
 
-    async function submitModal() {
-      const prenom = document.getElementById("modal-prenom").value.trim();
-      const email = document.getElementById("modal-email").value.trim();
-      if (!prenom || !email.includes("@")) return;
-      await sendNewsletter(prenom, email);
-      document.getElementById("modal-msg").style.display = "block";
-      setTimeout(() => closeModal(), 2000);
-    }
-
-    function closeModal() {
-      document.getElementById("nl-overlay").classList.remove("open");
-    }
-
-    let modalShown = false;
-    setTimeout(() => {
-      if (!modalShown) {
-        document.getElementById("nl-overlay").classList.add("open");
-        modalShown = true;
+    // Newsletter form intercept
+    const emailInput = document.querySelector('.newsletter-form input');
+    const emailBtn = document.querySelector('.newsletter-form .btn-primary');
+    emailBtn.addEventListener('click', (e) => {
+      if (emailInput.value.trim()) {
+        // Open JotForm with pre-filled email if possible, else just open
+        window.open('https://form.jotform.com/230262784265054', '_blank');
       }
-    }, 30000);
-</script>
-</body>
-</html>
+    });
