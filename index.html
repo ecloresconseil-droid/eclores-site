@@ -1128,13 +1128,6 @@
       document.getElementById("nl-prenom").value = "";
       document.getElementById("nl-email").value = "";
     }
-
-    // Newsletter form intercept
-    const emailInput = document.querySelector('.newsletter-form input');
-    const emailBtn = document.querySelector('.newsletter-form .btn-primary');
-    emailBtn.addEventListener('click', (e) => {
-      if (emailInput.value.trim()) {
-        // Open JotForm with pre-filled email if possible, else just open
-        window.open('https://form.jotform.com/230262784265054', '_blank');
-      }
-    });
+</script>
+</body>
+</html>
