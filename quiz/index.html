@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnostic patrimonial — EcloRes</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #0F6E56;
+    --green-light: #E1F5EE;
+    --green-mid: #1D9E75;
+    --green-dark: #085041;
+    --ink: #1a1a18;
+    --ink-soft: #4a4a46;
+    --ink-muted: #888780;
+    --surface: #fafaf8;
+    --border: rgba(26,26,24,0.1);
+    --white: #ffffff;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--surface);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .quiz-shell {
+    width: 100%;
+    max-width: 560px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2.5rem;
+  }
+  .brand-mark {
+    width: 28px;
+    height: 28px;
+    background: var(--green);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .brand-mark svg { display: block; }
+  .brand-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    letter-spacing: .03em;
+  }
+
+  .screen { display: none; animation: fadeUp .35s ease both; }
+  .screen.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* INTRO */
+  .intro-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--green);
+    background: var(--green-light);
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 1.25rem;
+  }
+  .intro-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(26px, 6vw, 36px);
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 1rem;
+  }
+  .intro-title em {
+    font-style: italic;
+    color: var(--green);
+  }
+  .intro-body {
+    font-size: 15px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+    margin-bottom: 1.75rem;
+  }
+  .meta-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+  .pill {
+    font-size: 12px;
+    color: var(--ink-soft);
+    background: var(--white);
+    border: 0.5px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green-mid); flex-shrink: 0; }
+
+  .btn-primary {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .2s, transform .1s;
+    text-align: center;
+  }
+  .btn-primary:hover { background: var(--green-dark); }
+  .btn-primary:active { transform: scale(.98); }
+
+  /* QUESTION */
+  .progress-track {
+    height: 2px;
+    background: var(--border);
+    border-radius: 1px;
+    margin-bottom: 1.75rem;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--green-mid);
+    border-radius: 1px;
+    transition: width .4s ease;
+  }
+  .q-meta {
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-bottom: .75rem;
+    display: flex;
+    justify-content: space-between;
+  }
+  .q-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(18px, 4vw, 22px);
+    line-height: 1.35;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+  }
+  .options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.25rem; }
+  .opt {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 13px 16px;
+    background: var(--white);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: border-color .15s, background .15s, color .15s;
+    line-height: 1.4;
+  }
+  .opt:hover { border-color: rgba(29,158,117,.4); background: #f5fdf9; color: var(--ink); }
+  .opt.selected { border: 1.5px solid var(--green-mid); background: var(--green-light); color: var(--green-dark); font-weight: 500; }
+  .opt.disabled { pointer-events: none; }
+
+  .btn-next {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .2s, opacity .2s, transform .1s;
+    opacity: .4;
+    pointer-events: none;
+  }
+  .btn-next.ready { opacity: 1; pointer-events: auto; }
+  .btn-next.ready:hover { background: var(--green-dark); }
+  .btn-next.ready:active { transform: scale(.98); }
+
+  /* EMAIL GATE */
+  .gate-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--green-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+  .gate-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--ink);
+    margin-bottom: .5rem;
+    line-height: 1.3;
+  }
+  .gate-sub {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin-bottom: 1.75rem;
+  }
+  .form-field { margin-bottom: 12px; }
+  .form-field label { display: block; font-size: 12px; font-weight: 500; color: var(--ink-soft); margin-bottom: 5px; letter-spacing: .02em; }
+  .form-field input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    transition: border-color .15s;
+    outline: none;
+  }
+  .form-field input:focus { border-color: var(--green-mid); }
+  .legal { font-size: 11px; color: var(--ink-muted); line-height: 1.55; margin-top: 12px; }
+  .error-msg { font-size: 12px; color: #c0392b; margin-top: 8px; display: none; }
+
+  /* RESULT */
+  .result-profile {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 1.25rem;
+  }
+  .profile-a { background: #EAF3DE; color: #27500A; }
+  .profile-b { background: var(--green-light); color: var(--green-dark); }
+  .profile-c { background: #FAEEDA; color: #633806; }
+
+  .result-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(20px, 5vw, 26px);
+    line-height: 1.3;
+    color: var(--ink);
+    margin-bottom: .75rem;
+  }
+  .result-body {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+  .insights { margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 10px; }
+  .insight {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 10px 14px;
+    background: var(--white);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+  .insight-icon { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; }
+  .insight-text { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+
+  .divider { height: 0.5px; background: var(--border); margin: 1.5rem 0; }
+
+  .btn-cta {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: background .2s;
+    margin-bottom: 10px;
+  }
+  .btn-cta:hover { background: var(--green-dark); }
+
+  .btn-soft {
+    display: block;
+    width: 100%;
+    padding: 13px;
+    background: transparent;
+    color: var(--ink-soft);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    text-align: center;
+    transition: background .15s;
+  }
+  .btn-soft:hover { background: var(--white); }
+
+  .sending-state { text-align: center; padding: 1rem 0; color: var(--ink-muted); font-size: 14px; display: none; }
+</style>
+</head>
+<body>
+<div class="quiz-shell">
+
+  <div class="brand">
+    <div class="brand-mark">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M8 2C5 2 3 4 3 7c0 2.5 1.5 4 3 5l2 2 2-2c1.5-1 3-2.5 3-5 0-3-2-5-5-5z" fill="white" opacity=".9"/>
+      </svg>
+    </div>
+    <span class="brand-name">Eclorés — Conseil en gestion de patrimoine</span>
+  </div>
+
+  <!-- ÉCRAN 1 : INTRO -->
+  <div class="screen active" id="screen-intro">
+    <div class="intro-tag">Diagnostic gratuit · 3 minutes</div>
+    <h1 class="intro-title">Votre patrimoine<br><em>travaille-t-il vraiment</em><br>pour vous ?</h1>
+    <p class="intro-body">7 questions pour évaluer votre situation et découvrir si un bilan patrimonial peut changer quelque chose pour vous. Résultat immédiat, sans engagement.</p>
+    <div class="meta-pills">
+      <div class="pill"><div class="pill-dot"></div>100 % confidentiel</div>
+      <div class="pill"><div class="pill-dot"></div>Résultat immédiat</div>
+      <div class="pill"><div class="pill-dot"></div>Sans engagement</div>
+    </div>
+    <button class="btn-primary" onclick="startQuiz()">Démarrer le diagnostic →</button>
+  </div>
+
+  <!-- ÉCRAN 2 : QUESTIONS -->
+  <div class="screen" id="screen-quiz">
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="q-meta">
+      <span id="q-label">Question 1 sur 7</span>
+      <span id="q-score-display"></span>
+    </div>
+    <div class="q-text" id="q-text"></div>
+    <div class="options" id="options-container"></div>
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()">Suivant →</button>
+  </div>
+
+  <!-- ÉCRAN 3 : CAPTURE EMAIL -->
+  <div class="screen" id="screen-email">
+    <div class="gate-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="1.8">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    </div>
+    <h2 class="gate-title">Votre résultat est prêt</h2>
+    <p class="gate-sub">Indiquez votre prénom et votre email pour accéder à votre diagnostic personnalisé.</p>
+    <div class="form-field">
+      <label>Prénom</label>
+      <input type="text" id="input-prenom" placeholder="Marie" autocomplete="given-name">
+    </div>
+    <div class="form-field">
+      <label>Email</label>
+      <input type="email" id="input-email" placeholder="marie@exemple.fr" autocomplete="email">
+    </div>
+    <div class="sending-state" id="sending-state">Envoi en cours...</div>
+    <div class="error-msg" id="error-msg">Une erreur est survenue. Veuillez réessayer.</div>
+    <button class="btn-primary" id="btn-reveal" onclick="submitEmail()" style="margin-top:4px">Voir mon résultat →</button>
+    <p class="legal">Vos données sont strictement confidentielles et ne seront jamais revendues. Conformément au RGPD, vous pouvez demander leur suppression à tout moment à contact@eclorespatrimoine.fr</p>
+  </div>
+
+  <!-- ÉCRAN 4 : RÉSULTAT -->
+  <div class="screen" id="screen-result">
+    <div class="result-profile" id="result-badge"></div>
+    <h2 class="result-title" id="result-title"></h2>
+    <p class="result-body" id="result-body"></p>
+    <div class="insights" id="result-insights"></div>
+    <div class="divider"></div>
+    <a href="https://calendly.com/matthieulecocq-eclorespatrimoine/45min" target="_blank" class="btn-cta" id="cta-primary"></a>
+    <button class="btn-soft" id="cta-soft" onclick="softCta()"></button>
+  </div>
+
+</div>
+
+<script>
+const BREVO_API_KEY = "xkeysib-...";
+const BREVO_LIST_ID = 10;
+const CALENDLY = "https://calendly.com/matthieulecocq-eclorespatrimoine/45min";
+
+const questions = [
+  {
+    text: "Quel est votre âge ?",
+    weight: 1.5,
+    options: [
+      { label: "Moins de 30 ans", score: 1 },
+      { label: "30 – 40 ans", score: 2 },
+      { label: "40 – 55 ans", score: 3 },
+      { label: "Plus de 55 ans", score: 2 }
+    ]
+  },
+  {
+    text: "Avez-vous des revenus complémentaires (loyers, dividendes, revenus fonciers...) ?",
+    weight: 2,
+    options: [
+      { label: "Non, uniquement des revenus salariaux", score: 1 },
+      { label: "Oui, mais ils restent marginaux", score: 2 },
+      { label: "Oui, ils représentent une part significative", score: 3 },
+      { label: "Je ne suis pas sûr(e)", score: 1 }
+    ]
+  },
+  {
+    text: "Avez-vous déjà réalisé un bilan patrimonial avec un conseiller ?",
+    weight: 1.5,
+    options: [
+      { label: "Jamais", score: 3 },
+      { label: "Il y a plus de 3 ans", score: 2 },
+      { label: "Oui, récemment", score: 1 },
+      { label: "Je ne sais pas ce que c'est vraiment", score: 3 }
+    ]
+  },
+  {
+    text: "Avez-vous des projets patrimoniaux dans les 3 prochaines années ?",
+    weight: 2,
+    options: [
+      { label: "Achat immobilier", score: 3 },
+      { label: "Préparation de la retraite", score: 3 },
+      { label: "Transmission ou donation", score: 3 },
+      { label: "Aucun projet identifié pour l'instant", score: 1 }
+    ]
+  },
+  {
+    text: "Pensez-vous que votre fiscalité est bien optimisée aujourd'hui ?",
+    weight: 2,
+    options: [
+      { label: "Oui, j'ai déjà des dispositifs en place", score: 1 },
+      { label: "Probablement pas, mais je n'ai pas creusé", score: 3 },
+      { label: "Je paie beaucoup d'impôts sans solution claire", score: 3 },
+      { label: "Je n'ai aucune idée", score: 2 }
+    ]
+  },
+  {
+    text: "Avez-vous des enfants ou des proches que vous souhaitez protéger ou avantager ?",
+    weight: 1.5,
+    options: [
+      { label: "Oui, et c'est une priorité pour moi", score: 3 },
+      { label: "Oui, mais je n'ai pas encore agi", score: 2 },
+      { label: "Non, pas pour l'instant", score: 1 }
+    ]
+  },
+  {
+    text: "Comment évaluez-vous votre niveau en gestion de patrimoine ?",
+    weight: 1,
+    options: [
+      { label: "Débutant — j'ai peu de connaissances", score: 3 },
+      { label: "Intermédiaire — je comprends les bases", score: 2 },
+      { label: "Avancé — je gère déjà activement", score: 1 }
+    ]
+  }
+];
+
+const profiles = {
+  A: {
+    badge: "Profil A — Patrimoine à construire",
+    badgeClass: "profile-a",
+    title: "Votre situation est simple aujourd'hui. C'est exactement le bon moment pour poser les bases.",
+    body: "Vous partez sur de bonnes fondations. Un bilan patrimonial à ce stade vous permettrait d'anticiper les étapes clés avant qu'elles ne s'imposent à vous.",
+    insights: [
+      "Mettre en place une stratégie d'épargne cohérente avec vos objectifs",
+      "Identifier les premiers outils de défiscalisation adaptés à votre profil",
+      "Anticiper les projets futurs avec une vision d'ensemble"
+    ],
+    ctaPrimary: "Discutons de vos objectifs →",
+    ctaSoft: "En savoir plus sur le bilan patrimonial"
+  },
+  B: {
+    badge: "Profil B — Patrimoine à structurer",
+    badgeClass: "profile-b",
+    title: "Vous avez des atouts réels, mais des angles morts qui vous coûtent probablement.",
+    body: "Votre situation présente des opportunités concrètes — fiscalité, transmission, projets moyen terme — qui méritent d'être mises à plat avant qu'elles ne vous échappent.",
+    insights: [
+      "Votre fiscalité peut probablement être optimisée dès cette année",
+      "Au moins un projet identifié mérite une stratégie claire",
+      "Une vision structurée vous ferait gagner du temps et de l'argent"
+    ],
+    ctaPrimary: "Réserver un échange de 45 min →",
+    ctaSoft: "Recevoir le résultat par email"
+  },
+  C: {
+    badge: "Profil C — Patrimoine à optimiser d'urgence",
+    badgeClass: "profile-c",
+    title: "Votre situation est complexe. Chaque mois sans stratégie claire a un coût réel.",
+    body: "Votre profil cumule plusieurs enjeux patrimoniaux importants : fiscalité, transmission, revenus complémentaires, projets structurants. Un bilan patrimonial complet s'impose.",
+    insights: [
+      "Des optimisations fiscales significatives sont certainement accessibles",
+      "Votre patrimoine nécessite une architecture cohérente et durable",
+      "Des décisions non prises aujourd'hui auront un impact mesurable demain"
+    ],
+    ctaPrimary: "Réserver votre bilan patrimonial →",
+    ctaSoft: "Recevoir une synthèse par email"
+  }
+};
+
+let currentQ = 0;
+let totalScore = 0;
+let answers = [];
+let userData = {};
+
+function startQuiz() {
+  showScreen("screen-quiz");
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  document.getElementById("q-label").textContent = `Question ${currentQ + 1} sur ${questions.length}`;
+  document.getElementById("q-text").textContent = q.text;
+  document.getElementById("progress-fill").style.width = `${((currentQ) / questions.length) * 100}%`;
+
+  const container = document.getElementById("options-container");
+  container.innerHTML = "";
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = opt.label;
+    btn.onclick = () => selectOption(btn, i);
+    container.appendChild(btn);
+  });
+
+  document.getElementById("btn-next").classList.remove("ready");
+}
+
+function selectOption(el, idx) {
+  document.querySelectorAll(".opt").forEach(o => o.classList.remove("selected"));
+  el.classList.add("selected");
+  el._scoreIdx = idx;
+  document.getElementById("btn-next").classList.add("ready");
+}
+
+function nextQuestion() {
+  const selected = document.querySelector(".opt.selected");
+  if (!selected) return;
+
+  const q = questions[currentQ];
+  const idx = Array.from(document.querySelectorAll(".opt")).indexOf(selected);
+  const score = q.options[idx].score * q.weight;
+  totalScore += score;
+  answers.push({ question: q.text, answer: q.options[idx].label });
+
+  currentQ++;
+  if (currentQ < questions.length) {
+    renderQuestion();
+  } else {
+    document.getElementById("progress-fill").style.width = "100%";
+    setTimeout(() => showScreen("screen-email"), 300);
+  }
+}
+
+function getProfile() {
+  const maxScore = questions.reduce((acc, q) => acc + 3 * q.weight, 0);
+  const pct = totalScore / maxScore;
+  if (pct < 0.40) return "A";
+  if (pct < 0.70) return "B";
+  return "C";
+}
+
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => {
+    s.classList.remove("active");
+    s.style.animation = "none";
+  });
+  const el = document.getElementById(id);
+  el.classList.add("active");
+  el.style.animation = "";
+  void el.offsetWidth;
+  el.style.animation = "fadeUp .35s ease both";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+async function submitEmail() {
+  const prenom = document.getElementById("input-prenom").value.trim();
+  const email = document.getElementById("input-email").value.trim();
+
+  if (!prenom || !email || !email.includes("@")) {
+    document.getElementById("error-msg").style.display = "block";
+    document.getElementById("error-msg").textContent = "Merci de renseigner un prénom et un email valide.";
+    return;
+  }
+
+  document.getElementById("btn-reveal").style.display = "none";
+  document.getElementById("sending-state").style.display = "block";
+  document.getElementById("error-msg").style.display = "none";
+
+  const profile = getProfile();
+  userData = { prenom, email, profile };
+
+  try {
+    await sendToBrevo(prenom, email, profile);
+  } catch(e) {
+    console.warn("Brevo error:", e);
+  }
+
+  showResult(prenom, profile);
+}
+async function sendToBrevo(prenom, email, profile) {
+  const res = await fetch("/api/subscribe", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      prenom,
+      email,
+      profile,
+      score: Math.round(totalScore),
+      date: new Date().toISOString().split("T")[0]
+    })
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(JSON.stringify(err));
+  }
+}
+  const res = await fetch("https://api.brevo.com/v3/contacts", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "api-key": BREVO_API_KEY
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(JSON.stringify(err));
+  }
+}
+
+function showResult(prenom, profileKey) {
+  const p = profiles[profileKey];
+
+  document.getElementById("result-badge").textContent = p.badge;
+  document.getElementById("result-badge").className = `result-profile ${p.badgeClass}`;
+  document.getElementById("result-title").textContent = p.title;
+  document.getElementById("result-body").textContent = p.body;
+
+  const insightsEl = document.getElementById("result-insights");
+  insightsEl.innerHTML = "";
+  p.insights.forEach(txt => {
+    const div = document.createElement("div");
+    div.className = "insight";
+    div.innerHTML = `
+      <svg class="insight-icon" viewBox="0 0 18 18" fill="none" stroke="#1D9E75" stroke-width="1.5">
+        <circle cx="9" cy="9" r="7"/>
+        <path d="M6 9l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="insight-text">${txt}</span>
+    `;
+    insightsEl.appendChild(div);
+  });
+
+  document.getElementById("cta-primary").textContent = p.ctaPrimary;
+  document.getElementById("cta-soft").textContent = p.ctaSoft;
+
+  showScreen("screen-result");
+}
+
+function softCta() {
+  const profile = getProfile();
+  const p = profiles[profile];
+  alert(`Un email récapitulatif sera envoyé à ${userData.email}.\n\nMerci ${userData.prenom} — nous revenons vers vous rapidement.`);
+}
+</script>
+</body>
+</html>
