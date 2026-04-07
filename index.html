@@ -763,8 +763,27 @@
       .livre-visual { order: -1; }
       #contact { grid-template-columns: 1fr; gap: 2.5rem; }
       .newsletter-form { flex-direction: column; }
-      footer { padding: 2rem 1.5rem; }
+     footer { padding: 2rem 1.5rem; }
+      .nl-overlay { flex-direction: column; }
     }
+
+    /* NEWSLETTER FORM */
+    .nl-form { display:flex; gap:.8rem; max-width:460px; margin:0 auto; }
+    .nl-form input { flex:1; padding:.85rem 1.2rem; border:1px solid rgba(89,125,110,.3); border-radius:2px; font-family:'DM Sans',sans-serif; font-size:.9rem; background:var(--blanc); color:var(--texte); outline:none; transition:border-color .2s; }
+    .nl-form input:focus { border-color:var(--vert); }
+    .nl-msg { margin-top:1rem; font-size:.85rem; color:var(--vert-fonce); display:none; text-align:center; }
+    .nl-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:200; align-items:center; justify-content:center; }
+    .nl-overlay.open { display:flex; }
+    .nl-modal { background:var(--blanc); border-radius:4px; padding:2.8rem; max-width:460px; width:90%; position:relative; }
+    .nl-modal-close { position:absolute; top:1rem; right:1.2rem; background:none; border:none; font-size:1.4rem; cursor:pointer; color:var(--gris); line-height:1; }
+    .nl-modal-tag { font-size:.72rem; font-weight:500; letter-spacing:.15em; text-transform:uppercase; color:var(--vert); margin-bottom:.75rem; }
+    .nl-modal-title { font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:300; color:var(--noir); margin-bottom:.75rem; line-height:1.2; }
+    .nl-modal-body { font-size:.9rem; color:#666; line-height:1.7; margin-bottom:1.5rem; }
+    .nl-modal-form { display:flex; flex-direction:column; gap:.75rem; }
+    .nl-modal-form input { padding:.85rem 1.2rem; border:1px solid rgba(89,125,110,.3); border-radius:2px; font-family:'DM Sans',sans-serif; font-size:.9rem; outline:none; transition:border-color .2s; }
+    .nl-modal-form input:focus { border-color:var(--vert); }
+    .nl-modal-legal { font-size:.75rem; color:#aaa; margin-top:.5rem; }
+    .nl-modal-msg { font-size:.85rem; color:var(--vert-fonce); display:none; margin-top:.5rem; }
   </style>
 </head>
 <body>
@@ -962,13 +981,32 @@
       <p class="section-label fade-up">Lettre patrimoniale</p>
       <h2 class="section-title fade-up">Restez <em>informé</em></h2>
       <p class="section-intro fade-up">Chaque mois, une lettre sur l'actualité patrimoniale, fiscale et immobilière. Sans jargon, directement utile.</p>
-      <div class="newsletter-form fade-up">
-        <input type="email" placeholder="Votre adresse email" />
-        <a href="https://form.jotform.com/230262784265054" target="_blank" class="btn-primary">S'inscrire</a>
+      <div class="nl-form fade-up">
+        <input type="text" id="nl-prenom" placeholder="Votre prénom" />
+        <input type="email" id="nl-email" placeholder="Votre email" />
+        <button class="btn-primary" onclick="submitNewsletter()">S'inscrire</button>
       </div>
+      <p class="nl-msg" id="nl-msg">Inscription confirmée — bienvenue !</p>
       <p class="newsletter-note fade-up">Aucun spam. Désabonnement en un clic à tout moment.</p>
     </div>
   </section>
+
+  <!-- MODALE NEWSLETTER -->
+  <div class="nl-overlay" id="nl-overlay">
+    <div class="nl-modal">
+      <button class="nl-modal-close" onclick="closeModal()">×</button>
+      <div class="nl-modal-tag">Lettre patrimoniale</div>
+      <h3 class="nl-modal-title">Une lettre mensuelle<br>qui change quelque chose</h3>
+      <p class="nl-modal-body">Actualité fiscale, stratégies patrimoniales, erreurs à éviter. Sans jargon, chaque mois dans votre boîte.</p>
+      <div class="nl-modal-form">
+        <input type="text" id="modal-prenom" placeholder="Votre prénom" />
+        <input type="email" id="modal-email" placeholder="Votre email" />
+        <button class="btn-primary" onclick="submitModal()">Je m'inscris</button>
+      </div>
+      <p class="nl-modal-msg" id="modal-msg">Inscription confirmée — bienvenue !</p>
+      <p class="nl-modal-legal">Aucun spam. Désabonnement en un clic.</p>
+    </div>
+  </div>
 
   <!-- CONTACT -->
   <section id="contact">
@@ -1074,15 +1112,41 @@
 
     document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-    // Newsletter form intercept
-    const emailInput = document.querySelector('.newsletter-form input');
-    const emailBtn = document.querySelector('.newsletter-form .btn-primary');
-    emailBtn.addEventListener('click', (e) => {
-      if (emailInput.value.trim()) {
-        // Open JotForm with pre-filled email if possible, else just open
-        window.open('https://form.jotform.com/230262784265054', '_blank');
+   async function sendNewsletter(prenom, email) {
+      await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prenom, email })
+      });
+    }
+
+    async function submitNewsletter() {
+      const prenom = document.getElementById("nl-prenom").value.trim();
+      const email = document.getElementById("nl-email").value.trim();
+      if (!prenom || !email.includes("@")) return;
+      await sendNewsletter(prenom, email);
+      document.getElementById("nl-msg").style.display = "block";
+      document.getElementById("nl-prenom").value = "";
+      document.getElementById("nl-email").value = "";
+    }
+
+    async function submitModal() {
+      const prenom = document.getElementById("modal-prenom").value.trim();
+      const email = document.getElementById("modal-email").value.trim();
+      if (!prenom || !email.includes("@")) return;
+      await sendNewsletter(prenom, email);
+      document.getElementById("modal-msg").style.display = "block";
+      setTimeout(() => closeModal(), 2000);
+    }
+
+    function closeModal() {
+      document.getElementById("nl-overlay").classList.remove("open");
+    }
+
+    let modalShown = false;
+    setTimeout(() => {
+      if (!modalShown) {
+        document.getElementById("nl-overlay").classList.add("open");
+        modalShown = true;
       }
-    });
-  </script>
-</body>
-</html>
+    }, 30000);
