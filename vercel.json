@@ -1,7 +1,7 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/newsletter", "destination": "/newsletter/index.html" },
+    { "source": "/newsletter", "destination": "/newsletter/newsletter.html" },
     { "source": "/quiz", "destination": "/quiz/index.html" }
   ]
 }
