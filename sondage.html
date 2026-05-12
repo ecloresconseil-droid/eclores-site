@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcloRes — Étude de marché professionnelle</title>
+  <meta name="description" content="Étude de marché sur la satisfaction et les attentes professionnelles — EcloRes Conseil en Gestion de Patrimoine" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --vert:       #597d6e;
+      --vert-fonce: #045952;
+      --gris:       #8a9a94;
+      --noir:       #1a1a1a;
+      --creme:      #f7f5f0;
+      --blanc:      #ffffff;
+      --or:         #b89a6a;
+      --texte:      #2d2d2d;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--texte);
+      background: var(--creme);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(89,125,110,0.12);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: var(--vert-fonce);
+      text-decoration: none;
+      letter-spacing: .04em;
+    }
+    .nav-back {
+      font-size: .82rem;
+      color: var(--gris);
+      text-decoration: none;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      transition: color .2s;
+    }
+    .nav-back:hover { color: var(--vert-fonce); }
+
+    /* HERO */
+    .hero {
+      padding: 120px 4rem 4rem;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .hero-label {
+      font-size: .72rem;
+      font-weight: 500;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--vert);
+      margin-bottom: 1.2rem;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      font-weight: 300;
+      color: var(--noir);
+      line-height: 1.15;
+      margin-bottom: 1.2rem;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--vert-fonce);
+    }
+    .hero-desc {
+      font-size: .95rem;
+      color: #555;
+      line-height: 1.8;
+      max-width: 560px;
+      margin-bottom: .8rem;
+    }
+    .hero-note {
+      font-size: .82rem;
+      color: var(--gris);
+      font-style: italic;
+    }
+
+    /* FORM */
+    .form-wrapper {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 4rem 6rem;
+    }
+
+    .form-section {
+      background: var(--blanc);
+      border: 1px solid rgba(89,125,110,0.15);
+      border-radius: 4px;
+      padding: 2.4rem;
+      margin-bottom: 1.6rem;
+      box-shadow: 0 2px 20px rgba(4,89,82,.04);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .5s ease, transform .5s ease;
+    }
+    .form-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: .85rem;
+      font-weight: 400;
+      color: var(--or);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: .6rem;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: var(--noir);
+      margin-bottom: 1.6rem;
+      padding-bottom: .8rem;
+      border-bottom: 1px solid rgba(89,125,110,.1);
+    }
+
+    .field-group {
+      margin-bottom: 1.4rem;
+    }
+    .field-group:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: .88rem;
+      font-weight: 500;
+      color: var(--texte);
+      margin-bottom: .5rem;
+    }
+    label .required {
+      color: var(--or);
+      margin-left: 2px;
+    }
+    label .hint {
+      font-weight: 300;
+      color: var(--gris);
+      font-size: .8rem;
+      margin-left: .4rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    textarea {
+      width: 100%;
+      padding: .75rem 1rem;
+      border: 1px solid rgba(89,125,110,.25);
+      border-radius: 2px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem;
+      color: var(--texte);
+      background: var(--blanc);
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      appearance: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--vert);
+      box-shadow: 0 0 0 3px rgba(89,125,110,.08);
+    }
+    textarea { resize: vertical; min-height: 80px; }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23597d6e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 2.5rem;
+      cursor: pointer;
+    }
+
+    /* SCALE */
+    .scale-group {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      flex-wrap: wrap;
+    }
+    .scale-label {
+      font-size: .78rem;
+      color: var(--gris);
+      white-space: nowrap;
+    }
+    .scale-options {
+      display: flex;
+      gap: .4rem;
+      flex: 1;
+    }
+    .scale-options input[type="radio"] { display: none; }
+    .scale-options label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(89,125,110,.25);
+      border-radius: 2px;
+      font-size: .85rem;
+      font-weight: 400;
+      color: var(--gris);
+      cursor: pointer;
+      transition: all .15s;
+      margin: 0;
+    }
+    .scale-options input[type="radio"]:checked + label {
+      background: var(--vert-fonce);
+      color: var(--blanc);
+      border-color: var(--vert-fonce);
+    }
+    .scale-options label:hover {
+      border-color: var(--vert);
+      color: var(--vert-fonce);
+    }
+
+    /* RADIO / CHECKBOX */
+    .radio-group, .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: .6rem;
+    }
+    .radio-option, .checkbox-option {
+      display: flex;
+      align-items: flex-start;
+      gap: .8rem;
+      cursor: pointer;
+      padding: .7rem 1rem;
+      border: 1px solid rgba(89,125,110,.15);
+      border-radius: 2px;
+      transition: background .15s, border-color .15s;
+    }
+    .radio-option:hover, .checkbox-option:hover {
+      background: var(--creme);
+      border-color: var(--vert);
+    }
+    .radio-option input, .checkbox-option input {
+      width: auto;
+      margin-top: 2px;
+      flex-shrink: 0;
+      accent-color: var(--vert-fonce);
+    }
+    .radio-option span, .checkbox-option span {
+      font-size: .88rem;
+      color: var(--texte);
+      line-height: 1.5;
+    }
+    .radio-option input:checked ~ span,
+    .checkbox-option input:checked ~ span {
+      color: var(--vert-fonce);
+      font-weight: 500;
+    }
+
+    /* VALUES GRID */
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: .6rem;
+    }
+    .value-option {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      padding: .7rem 1rem;
+      border: 1px solid rgba(89,125,110,.15);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .value-option:hover {
+      background: var(--creme);
+      border-color: var(--vert);
+    }
+    .value-option input {
+      width: auto;
+      accent-color: var(--vert-fonce);
+    }
+    .value-option span {
+      font-size: .85rem;
+      color: var(--texte);
+    }
+
+    /* TWO COLS */
+    .two-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+    }
+
+    /* SUBMIT */
+    .submit-wrapper {
+      text-align: center;
+      padding: 2rem 0 1rem;
+    }
+    .btn-submit {
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      background: var(--vert-fonce);
+      color: var(--blanc);
+      border: none;
+      padding: 1rem 2.8rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .92rem;
+      font-weight: 500;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background .2s, transform .15s;
+      letter-spacing: .02em;
+    }
+    .btn-submit:hover {
+      background: var(--vert);
+      transform: translateY(-1px);
+    }
+    .submit-note {
+      margin-top: .8rem;
+      font-size: .78rem;
+      color: var(--gris);
+    }
+
+    /* SUCCESS */
+    .success-msg {
+      display: none;
+      text-align: center;
+      padding: 3rem 2rem;
+      background: var(--blanc);
+      border: 1px solid rgba(89,125,110,.2);
+      border-radius: 4px;
+      margin: 2rem 0;
+    }
+    .success-msg.show { display: block; }
+    .success-icon {
+      width: 56px; height: 56px;
+      background: var(--vert-fonce);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.4rem;
+    }
+    .success-icon svg { color: white; }
+    .success-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: var(--noir);
+      margin-bottom: .8rem;
+    }
+    .success-desc {
+      font-size: .9rem;
+      color: #666;
+      max-width: 440px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* PROGRESS */
+    .progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      background: var(--or);
+      transition: width .3s ease;
+      z-index: 200;
+    }
+
+    /* FOOTER */
+    .page-footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: .75rem;
+      color: var(--gris);
+      border-top: 1px solid rgba(89,125,110,.1);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .hero { padding: 100px 1.5rem 2rem; }
+      .form-wrapper { padding: 0 1.5rem 4rem; }
+      .two-cols { grid-template-columns: 1fr; }
+      .scale-options label { width: 34px; height: 34px; font-size: .8rem; }
+      .values-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-bar" id="progressBar"></div>
+
+  <nav>
+    <a class="nav-logo" href="https://eclorespatrimoine.fr">EcloRes</a>
+    <a class="nav-back" href="https://eclorespatrimoine.fr">← Retour au site</a>
+  </nav>
+
+  <div class="hero">
+    <p class="hero-label">EcloRes — Étude de marché</p>
+    <h1 class="hero-title">Perception et attentes<br><em>professionnelles</em></h1>
+    <p class="hero-desc">
+      Cette étude de marché est réalisée dans le cadre du développement d'EcloRes. Elle nous permet de mieux comprendre les attentes et les aspirations des professionnels dans leur activité actuelle.
+    </p>
+    <p class="hero-note">Confidentiel — 5 minutes — Sans engagement</p>
+  </div>
+
+  <div class="form-wrapper">
+
+    <div id="successMsg" class="success-msg">
+      <div class="success-icon">
+        <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>
+      </div>
+      <h2 class="success-title">Merci pour votre participation</h2>
+      <p class="success-desc">Vos réponses ont bien été transmises. Nous reviendrons vers vous si votre profil correspond à notre démarche.</p>
+    </div>
+
+    <form id="sondageForm" action="https://formspree.io/f/xgoddknk" method="POST">
+
+      <!-- SECTION 1 -->
+      <div class="form-section">
+        <p class="section-num">01</p>
+        <h2 class="section-title">Vos informations</h2>
+        <div class="two-cols">
+          <div class="field-group">
+            <label>Prénom <span class="required">*</span></label>
+            <input type="text" name="prenom" required placeholder="Votre prénom" />
+          </div>
+          <div class="field-group">
+            <label>Nom <span class="required">*</span></label>
+            <input type="text" name="nom" required placeholder="Votre nom" />
+          </div>
+        </div>
+        <div class="two-cols">
+          <div class="field-group">
+            <label>Email <span class="required">*</span></label>
+            <input type="email" name="email" required placeholder="votre@email.fr" />
+          </div>
+          <div class="field-group">
+            <label>Téléphone</label>
+            <input type="tel" name="telephone" placeholder="06 XX XX XX XX" />
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Zone géographique <span class="required">*</span></label>
+          <input type="text" name="zone" required placeholder="Ex: Bordeaux, Gironde, Nouvelle-Aquitaine..." />
+        </div>
+      </div>
+
+      <!-- SECTION 2 -->
+      <div class="form-section">
+        <p class="section-num">02</p>
+        <h2 class="section-title">Votre activité actuelle</h2>
+        <div class="two-cols">
+          <div class="field-group">
+            <label>Métier actuel <span class="required">*</span></label>
+            <input type="text" name="metier" required placeholder="Ex: Commercial, Conseiller, Agent..." />
+          </div>
+          <div class="field-group">
+            <label>Statut <span class="required">*</span></label>
+            <select name="statut" required>
+              <option value="" disabled selected>Sélectionner</option>
+              <option>Salarié</option>
+              <option>Indépendant</option>
+              <option>Agent général</option>
+              <option>Mandataire</option>
+              <option>Autre</option>
+            </select>
+          </div>
+        </div>
+        <div class="two-cols">
+          <div class="field-group">
+            <label>Ancienneté dans votre activité <span class="required">*</span></label>
+            <select name="anciennete" required>
+              <option value="" disabled selected>Sélectionner</option>
+              <option>Moins d'1 an</option>
+              <option>1 à 3 ans</option>
+              <option>3 à 5 ans</option>
+              <option>5 à 10 ans</option>
+              <option>Plus de 10 ans</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Tranche d'âge <span class="required">*</span></label>
+            <select name="age" required>
+              <option value="" disabled selected>Sélectionner</option>
+              <option>Moins de 30 ans</option>
+              <option>30 à 45 ans</option>
+              <option>46 à 60 ans</option>
+              <option>Plus de 60 ans</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 3 -->
+      <div class="form-section">
+        <p class="section-num">03</p>
+        <h2 class="section-title">Votre satisfaction professionnelle</h2>
+
+        <div class="field-group">
+          <label>Sur une échelle de 1 à 10, quel est votre niveau d'épanouissement professionnel ? <span class="required">*</span></label>
+          <div class="scale-group" style="margin-top:.8rem">
+            <span class="scale-label">Peu épanoui</span>
+            <div class="scale-options">
+              <input type="radio" name="epanouissement" id="e1" value="1" required />
+              <label for="e1">1</label>
+              <input type="radio" name="epanouissement" id="e2" value="2" />
+              <label for="e2">2</label>
+              <input type="radio" name="epanouissement" id="e3" value="3" />
+              <label for="e3">3</label>
+              <input type="radio" name="epanouissement" id="e4" value="4" />
+              <label for="e4">4</label>
+              <input type="radio" name="epanouissement" id="e5" value="5" />
+              <label for="e5">5</label>
+              <input type="radio" name="epanouissement" id="e6" value="6" />
+              <label for="e6">6</label>
+              <input type="radio" name="epanouissement" id="e7" value="7" />
+              <label for="e7">7</label>
+              <input type="radio" name="epanouissement" id="e8" value="8" />
+              <label for="e8">8</label>
+              <input type="radio" name="epanouissement" id="e9" value="9" />
+              <label for="e9">9</label>
+              <input type="radio" name="epanouissement" id="e10" value="10" />
+              <label for="e10">10</label>
+            </div>
+            <span class="scale-label">Très épanoui</span>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Votre rémunération reflète-t-elle votre investissement et vos résultats ? <span class="required">*</span></label>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="remuneration" value="Oui, tout à fait" required />
+              <span>Oui, tout à fait</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="remuneration" value="Partiellement" />
+              <span>Partiellement</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="remuneration" value="Non, pas suffisamment" />
+              <span>Non, pas suffisamment</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Votre activité vous permettra-t-elle de réaliser vos projets personnels et familiaux ? <span class="required">*</span></label>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="projets" value="Oui, certainement" required />
+              <span>Oui, certainement</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="projets" value="Peut-être" />
+              <span>Peut-être</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="projets" value="Non, probablement pas" />
+              <span>Non, probablement pas</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 4 -->
+      <div class="form-section">
+        <p class="section-num">04</p>
+        <h2 class="section-title">Ouverture au changement</h2>
+
+        <div class="field-group">
+          <label>Si vous envisagiez de changer de modèle professionnel, quels seraient vos principaux freins ? <span class="hint">(plusieurs choix possibles)</span></label>
+          <div class="checkbox-group" style="margin-top:.4rem">
+            <label class="checkbox-option"><input type="checkbox" name="freins[]" value="Le choix du domaine d'activité" /><span>Le choix du domaine d'activité</span></label>
+            <label class="checkbox-option"><input type="checkbox" name="freins[]" value="Des revenus insuffisants ou instables au démarrage" /><span>Des revenus insuffisants ou instables au démarrage</span></label>
+            <label class="checkbox-option"><input type="checkbox" name="freins[]" value="Un investissement financier important" /><span>Un investissement financier important</span></label>
+            <label class="checkbox-option"><input type="checkbox" name="freins[]" value="Les démarches administratives et réglementaires" /><span>Les démarches administratives et réglementaires</span></label>
+            <label class="checkbox-option"><input type="checkbox" name="freins[]" value="Le manque de formation ou d'accompagnement" /><span>Le manque de formation ou d'accompagnement</span></label>
+            <label class="checkbox-option"><input type="checkbox" name="freins[]" value="La peur de l'échec" /><span>La peur de l'échec</span></label>
+            <label class="checkbox-option"><input type="checkbox" name="freins[]" value="L'absence de réseau" /><span>L'absence de réseau</span></label>
+            <label class="checkbox-option"><input type="checkbox" name="freins[]" value="Les contraintes familiales" /><span>Les contraintes familiales</span></label>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Seriez-vous prêt à démarrer une activité complémentaire tout en conservant votre emploi actuel ? <span class="required">*</span></label>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="double_activite" value="Oui, c'est même indispensable pour moi" required />
+              <span>Oui, c'est même indispensable pour moi</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="double_activite" value="Oui, si les revenus sont rapidement au rendez-vous" />
+              <span>Oui, si les revenus sont rapidement au rendez-vous</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="double_activite" value="Non, je préfère me consacrer à une seule activité" />
+              <span>Non, je préfère me consacrer à une seule activité</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 5 -->
+      <div class="form-section">
+        <p class="section-num">05</p>
+        <h2 class="section-title">Vos valeurs et motivations</h2>
+
+        <div class="field-group">
+          <label>Parmi ces éléments, lesquels seraient déterminants dans votre choix d'une nouvelle activité ? <span class="hint">(plusieurs choix possibles)</span></label>
+          <div class="values-grid" style="margin-top:.8rem">
+            <label class="value-option"><input type="checkbox" name="valeurs[]" value="Liberté et gestion de mon temps" /><span>Liberté et gestion du temps</span></label>
+            <label class="value-option"><input type="checkbox" name="valeurs[]" value="Rémunération à la hauteur de mon implication" /><span>Rémunération motivante</span></label>
+            <label class="value-option"><input type="checkbox" name="valeurs[]" value="Sens et impact positif" /><span>Sens et impact positif</span></label>
+            <label class="value-option"><input type="checkbox" name="valeurs[]" value="Équilibre vie pro/perso" /><span>Équilibre vie pro/perso</span></label>
+            <label class="value-option"><input type="checkbox" name="valeurs[]" value="Transmission et formation" /><span>Transmission et formation</span></label>
+            <label class="value-option"><input type="checkbox" name="valeurs[]" value="Reconnaissance" /><span>Reconnaissance</span></label>
+            <label class="value-option"><input type="checkbox" name="valeurs[]" value="Autonomie" /><span>Autonomie</span></label>
+            <label class="value-option"><input type="checkbox" name="valeurs[]" value="Relations humaines" /><span>Relations humaines</span></label>
+          </div>
+        </div>
+
+        <div class="field-group" style="margin-top:1.4rem">
+          <label>Un commentaire libre ? <span class="hint">(facultatif)</span></label>
+          <textarea name="commentaire" placeholder="Partagez ce qui vous semble important et que les questions précédentes n'auraient pas abordé..."></textarea>
+        </div>
+      </div>
+
+      <div class="submit-wrapper">
+        <button type="submit" class="btn-submit">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+          Envoyer mes réponses
+        </button>
+        <p class="submit-note">Vos réponses sont confidentielles et ne seront utilisées qu'à des fins d'étude interne.</p>
+      </div>
+
+    </form>
+
+  </div>
+
+  <footer class="page-footer">
+    EcloRes — Conseil en Gestion de Patrimoine indépendant — ORIAS n°25004370<br>
+    <a href="https://eclorespatrimoine.fr" style="color:var(--vert);text-decoration:none;">eclorespatrimoine.fr</a>
+  </footer>
+
+  <script>
+    // Scroll animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.form-section').forEach(el => observer.observe(el));
+
+    // Progress bar
+    window.addEventListener('scroll', () => {
+      const doc = document.documentElement;
+      const scroll = doc.scrollTop || document.body.scrollTop;
+      const height = doc.scrollHeight - doc.clientHeight;
+      const pct = (scroll / height) * 100;
+      document.getElementById('progressBar').style.width = pct + '%';
+    });
+
+    // Form submit
+    const form = document.getElementById('sondageForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('.btn-submit');
+      btn.textContent = 'Envoi en cours...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        });
+        if (res.ok) {
+          form.style.display = 'none';
+          document.getElementById('successMsg').classList.add('show');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          btn.textContent = 'Envoyer mes réponses';
+          btn.disabled = false;
+          alert('Une erreur est survenue. Merci de réessayer.');
+        }
+      } catch {
+        btn.textContent = 'Envoyer mes réponses';
+        btn.disabled = false;
+        alert('Une erreur est survenue. Merci de réessayer.');
+      }
+    });
+  </script>
+
+</body>
+</html>
